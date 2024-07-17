@@ -1,0 +1,99 @@
+ import pygame
+import sys
+
+# Initialize Pygame
+pygame.init()
+
+# Screen dimensions
+WIDTH, HEIGHT = 800, 600
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption("Simple Soccer Game")
+
+# Colors
+GREEN = (0, 255, 0)
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+BLUE = (0, 0, 255)
+
+# Player settings
+PLAYER_SIZE = 20
+PLAYER_SPEED = 5
+
+# Ball settings
+BALL_SIZE = 15
+BALL_SPEED = 5
+
+# Initial positions
+player1_pos = [100, HEIGHT // 2]
+player2_pos = [WIDTH - 100, HEIGHT // 2]
+ball_pos = [WIDTH // 2, HEIGHT // 2]
+ball_vel = [BALL_SPEED, BALL_SPEED]
+
+# Main game loop
+clock = pygame.time.Clock()
+running = True
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+
+    # Key presses
+    keys = pygame.key.get_pressed()
+
+    # Player 1 controls (WASD)
+    if keys[pygame.K_w] and player1_pos[1] - PLAYER_SPEED >= 0:
+        player1_pos[1] -= PLAYER_SPEED
+    if keys[pygame.K_s] and player1_pos[1] + PLAYER_SIZE + PLAYER_SPEED <= HEIGHT:
+        player1_pos[1] += PLAYER_SPEED
+    if keys[pygame.K_a] and player1_pos[0] - PLAYER_SPEED >= 0:
+        player1_pos[0] -= PLAYER_SPEED
+    if keys[pygame.K_d] and player1_pos[0] + PLAYER_SIZE + PLAYER_SPEED <= WIDTH:
+        player1_pos[0] += PLAYER_SPEED
+
+    # Player 2 controls (Arrow keys)
+    if keys[pygame.K_UP] and player2_pos[1] - PLAYER_SPEED >= 0:
+        player2_pos[1] -= PLAYER_SPEED
+    if keys[pygame.K_DOWN] and player2_pos[1] + PLAYER_SIZE + PLAYER_SPEED <= HEIGHT:
+        player2_pos[1] += PLAYER_SPEED
+    if keys[pygame.K_LEFT] and player2_pos[0] - PLAYER_SPEED >= 0:
+        player2_pos[0] -= PLAYER_SPEED
+    if keys[pygame.K_RIGHT] and player2_pos[0] + PLAYER_SIZE + PLAYER_SPEED <= WIDTH:
+        player2_pos[0] += PLAYER_SPEED
+
+    # Ball movement
+    ball_pos[0] += ball_vel[0]
+    ball_pos[1] += ball_vel[1]
+
+    # Ball collision with walls
+    if ball_pos[1] <= 0 or ball_pos[1] >= HEIGHT - BALL_SIZE:
+        ball_vel[1] = -ball_vel[1]
+    if ball_pos[0] <= 0 or ball_pos[0] >= WIDTH - BALL_SIZE:
+        ball_vel[0] = -ball_vel[0]
+
+    # Ball collision with players
+    if (player1_pos[0] <= ball_pos[0] <= player1_pos[0] + PLAYER_SIZE and
+            player1_pos[1] <= ball_pos[1] <= player1_pos[1] + PLAYER_SIZE):
+        ball_vel[0] = -ball_vel[0]
+
+    if (player2_pos[0] <= ball_pos[0] <= player2_pos[0] + PLAYER_SIZE and
+            player2_pos[1] <= ball_pos[1] <= player2_pos[1] + PLAYER_SIZE):
+        ball_vel[0] = -ball_vel[0]
+
+    # Draw everything
+    screen.fill(GREEN)
+    pygame.draw.rect(screen, RED, (player1_pos[0], player1_pos[1], PLAYER_SIZE, PLAYER_SIZE))
+    pygame.draw.rect(screen, BLUE, (player2_pos[0], player2_pos[1], PLAYER_SIZE, PLAYER_SIZE))
+    pygame.draw.circle(screen, WHITE, (ball_pos[0], ball_pos[1]), BALL_SIZE)
+
+    # Update display
+    pygame.display.flip()
+    clock.tick(30)
+
+pygame.quit()
+sys.exit()
+
+
+
+
+
